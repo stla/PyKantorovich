@@ -3,6 +3,9 @@ __version__ = '0.1.0'
 from math import isclose
 import numpy as np
 import cdd
+from scipy.optimize import linprog
+from scipy import sparse
+
 
 def distance_matrix(numbers, distance="euclidean"):
     numbers = np.asarray(numbers)
@@ -11,6 +14,7 @@ def distance_matrix(numbers, distance="euclidean"):
         return np.linalg.norm(diffs, axis=-1)
     if distance == "manhattan":
         return np.sum(np.abs(diffs), axis=-1)
+
 
 def makeH(mu, nu, number_type):
     mu = np.asarray(mu)
@@ -33,6 +37,7 @@ def makeH(mu, nu, number_type):
     mat = cdd.Matrix(a1, linear=False, number_type=number_type)
     mat.extend(a2, linear=True)
     return (mat, n)
+
     
 def kantorovich_cdd(mu, nu, number_type="fraction", distance_matrix = "0-1"):
     mat, n = makeH(mu, nu, number_type)
@@ -65,3 +70,38 @@ def extreme_joinings(mu, nu, number_type="fraction"):
     flatjoinings= np.asarray(V)[:, 1:].tolist()
     return [np.reshape(j, (n, n)) for j in flatjoinings]
 
+
+def kantorovich_sparse(mu, nu, distance_matrix = "0-1"):
+    mu = np.asarray(mu)
+    nu = np.asarray(nu)
+    n = len(mu)
+    if n != len(nu):
+        raise ValueError("")
+    n2 = n*n
+    eyen = sparse.eye(n, dtype = int)    
+    A = eyen
+    B = sparse.csr_matrix(np.ones(n, dtype = int))
+    M1 = sparse.kron(A, B)
+    M2 = sparse.hstack([eyen]*n, dtype=int)
+    M = sparse.vstack([M1, M2])
+    a1 = sparse.eye(n2, dtype = int)
+    b1 = np.zeros(n2, dtype=int)
+    b2 = np.concatenate((mu, nu))
+    if distance_matrix == "0-1":
+        d = np.ones((n, n), dtype=int)
+        np.fill_diagonal(d, 0)
+        d = d.flatten()
+    else:
+        d = distance_matrix.flatten()
+    res = linprog(
+        d, A_ub = -a1, b_ub = b1, A_eq = M, b_eq = b2, 
+        method="highs-ipm"
+    )
+    return {
+        "distance": res.fun,
+        "joining": np.reshape(res.x, (n,n)),
+        "message": res.message
+    }
+
+mu = [1/7,2/7,4/7]
+nu = [1/4,1/4,1/2]
