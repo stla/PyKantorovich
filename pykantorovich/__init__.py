@@ -58,8 +58,8 @@ def kantorovich_cdd(mu, nu, number_type="fraction", distance_matrix = "0-1"):
         "optimal": "yes" if lp.status == cdd.LPStatusType.OPTIMAL else "no" 
     }
 
-# mu = ['1/7','2/7','4/7']
-# nu = ['1/4','1/4','1/2']
+mu = ['1/7','2/7','4/7']
+nu = ['1/4','1/4','1/2']
 
 # kantorovich_cdd(mu, nu)  
 
@@ -105,3 +105,34 @@ def kantorovich_sparse(mu, nu, distance_matrix = "0-1"):
 
 mu = [1/7,2/7,4/7]
 nu = [1/4,1/4,1/2]
+
+import cvxpy as cp
+
+def kantorovich_cvx(mu, nu, distance_matrix = "0-1"):
+    mu = np.asarray(mu)
+    nu = np.asarray(nu)
+    n = len(mu)
+    if n != len(nu):
+        raise ValueError("")
+    n2 = n*n
+    eyen = np.eye(n, dtype = int)    
+    A = eyen
+    nones = np.ones(n, dtype = int)
+    M1 = np.kron(A, nones)
+    M2 = np.tile(np.diag(nones), n)
+    M = np.vstack((M1, M2))
+    a1 = np.eye(n2, dtype = int)
+    b1 = np.zeros(n2, dtype=int)
+    b2 = np.concatenate((mu, nu))
+    if distance_matrix == "0-1":
+        d = np.ones((n, n), dtype=int)
+        np.fill_diagonal(d, 0)
+        d = d.flatten()
+    else:
+        d = distance_matrix.flatten()
+    p = cp.Variable(n*n)
+    constraints = [M @ p == b2, p >= 0]
+    obj = cp.Minimize(sum(cp.multiply(p, d)))
+    prob = cp.Problem(obj, constraints)
+    distance = prob.solve(solver=cp.OSQP)
+    return (distance, prob.solution.primal_vars)
