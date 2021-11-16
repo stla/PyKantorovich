@@ -105,8 +105,8 @@ def _kantorovich_sparse(mu, nu, distance_matrix = "0-1"):
         "message": res.message
     }
 
-mu = [1/7,2/7,4/7]
-nu = [1/4,1/4,1/2]
+# mu = [1/7,2/7,4/7]
+# nu = [1/4,1/4,1/2]
 
 
 def _kantorovich_cvx(mu, nu, distance_matrix = "0-1"):
@@ -199,13 +199,13 @@ def kantorovich(
     nu = np.asarray(nu)
     if (
             number_type == "fraction"
-            and np.all(np.apply_along_axis(_is_fraction, 0, mu))
-            and np.all(np.apply_along_axis(_is_fraction, 0, nu))
+            and np.all(np.frompyfunc(_is_fraction, 1, 1)(mu))
+            and np.all(np.frompyfunc(_is_fraction, 1, 1)(nu))
         ):
-        mu_fr = np.apply_along_axis(_to_fraction, 0, mu)
+        mu_fr = np.frompyfunc(_to_fraction, 1, 1)(mu)
         if np.sum(mu_fr) != 1:
             raise ValueError("`mu` does not sum to one.")
-        nu_fr = np.apply_along_axis(_to_fraction, 0, nu)
+        nu_fr = np.frompyfunc(_to_fraction, 1, 1)(nu)
         if np.sum(nu_fr) != 1:
             raise ValueError("`nu` does not sum to one.")
     else: 
