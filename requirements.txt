@@ -1,0 +1,5 @@
+numpy
+pycddlib
+scipy
+cvxpy
+sphinxcontrib-restbuilder

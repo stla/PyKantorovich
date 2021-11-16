@@ -1,0 +1,212 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Welcome to PyKantorovich’s documentation! &#8212; PyKantorovich 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <link rel="stylesheet" href="_static/css/function.css" type="text/css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="welcome-to-pykantorovichs-documentation">
+<h1>Welcome to PyKantorovich’s documentation!<a class="headerlink" href="#welcome-to-pykantorovichs-documentation" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference external" href="genindex.rst">Index</a></p></li>
+<li><p><a class="reference external" href="py-modindex.rst">Module Index</a></p></li>
+<li><p><a class="reference external" href="search.rst">Search Page</a></p></li>
+</ul>
+<p><strong>pykantorovich.extreme_joinings(mu, nu, number_type=’fraction’,
+prettyprint=True)</strong></p>
+<blockquote>
+<div><p>Extreme joinings of two probabiity measures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> (<em>array-like</em>) – A probability vector.</p></li>
+<li><p><strong>nu</strong> (<em>array-like</em>) – A probability vector. Must have the
+same length as <em>mu</em>.</p></li>
+<li><p><strong>number_type</strong> (<em>str</em>) – The type to use for the
+calculations, either <em>“fraction”</em> or <em>“float”</em>.</p></li>
+<li><p><strong>prettyprint</strong> (<em>bool</em>) – Whether to pretty-print the
+results (especially when <em>number_type=”fraction”</em>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The extreme joinings of <em>mu</em> and <em>nu</em>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<p>-[ Examples ]-</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1/2&#39;</span><span class="p">,</span><span class="s1">&#39;1/4&#39;</span><span class="p">,</span><span class="s1">&#39;1/4&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nu</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1/4&#39;</span><span class="p">,</span><span class="s1">&#39;1/4&#39;</span><span class="p">,</span><span class="s1">&#39;1/2&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">joinings</span> <span class="o">=</span> <span class="n">extreme_joinings</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span>
+<span class="go">[[&#39;1/4&#39; &#39;0&#39; &#39;1/4&#39;]</span>
+<span class="go"> [&#39;0&#39; &#39;1/4&#39; &#39;0&#39;]</span>
+<span class="go"> [&#39;0&#39; &#39;0&#39; &#39;1/4&#39;]]</span>
+<span class="go">[[&#39;1/4&#39; &#39;0&#39; &#39;1/4&#39;]</span>
+<span class="go"> [&#39;0&#39; &#39;0&#39; &#39;1/4&#39;]</span>
+<span class="go"> [&#39;0&#39; &#39;1/4&#39; &#39;0&#39;]]</span>
+<span class="go">[[&#39;1/4&#39; &#39;1/4&#39; &#39;0&#39;]</span>
+<span class="go"> [&#39;0&#39; &#39;0&#39; &#39;1/4&#39;]</span>
+<span class="go"> [&#39;0&#39; &#39;0&#39; &#39;1/4&#39;]]</span>
+<span class="go">[[&#39;0&#39; &#39;1/4&#39; &#39;1/4&#39;]</span>
+<span class="go"> [&#39;1/4&#39; &#39;0&#39; &#39;0&#39;]</span>
+<span class="go"> [&#39;0&#39; &#39;0&#39; &#39;1/4&#39;]]</span>
+<span class="go">[[&#39;0&#39; &#39;1/4&#39; &#39;1/4&#39;]</span>
+<span class="go"> [&#39;0&#39; &#39;0&#39; &#39;1/4&#39;]</span>
+<span class="go"> [&#39;1/4&#39; &#39;0&#39; &#39;0&#39;]]</span>
+<span class="go">[[&#39;0&#39; &#39;0&#39; &#39;1/2&#39;]</span>
+<span class="go"> [&#39;0&#39; &#39;1/4&#39; &#39;0&#39;]</span>
+<span class="go"> [&#39;1/4&#39; &#39;0&#39; &#39;0&#39;]]</span>
+<span class="go">[[&#39;0&#39; &#39;0&#39; &#39;1/2&#39;]</span>
+<span class="go"> [&#39;1/4&#39; &#39;0&#39; &#39;0&#39;]</span>
+<span class="go"> [&#39;0&#39; &#39;1/4&#39; &#39;0&#39;]]</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>pykantorovich.kantorovich(mu, nu, distance_matrix=’0-1’,
+method=’cdd’, number_type=’fraction’, prettyprint=True)</strong></p>
+<blockquote>
+<div><p>Kantorovich distance between two probabiity measures on a finite
+set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> (<em>array-like</em>) – Array-like representing a
+probability.</p></li>
+<li><p><strong>nu</strong> (<em>array-like</em>) – Array-like representing a
+probability. Must have the same length as <em>mu</em>.</p></li>
+<li><p><strong>distance_matrix</strong> (<em>n x n matrix</em>) – The cost matrix. The
+default is “0-1”, the zero-or-one distance. Note that the
+implemented calculation of the Kantorovich distance is
+totally useless in this case, because it equals <em>1.0 -
+np.sum(np.minimum(mu, nu))</em>.</p></li>
+<li><p><strong>method</strong> (<em>string</em>) – The method to use. Can be “cdd”,
+“sparse”, or “cvx”.</p></li>
+<li><p><strong>number_type</strong> (<em>string</em>) – For method=”cdd” only. Can be
+“float” or “fraction”. The default is “fraction”.</p></li>
+<li><p><strong>prettyprint</strong> (<em>bool</em>) – This is only for <em>method=”cdd”</em>
+and <em>number_type=”fraction”</em>. This prints a more readable
+result.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><ul class="simple">
+<li><p>The Kantorovich distance between <em>mu</em> and <em>nu</em> and a joining
+of <em>mu</em> and</p></li>
+<li><p><em>nu</em> for which the Kantorovich distance is the probability
+that the two</p></li>
+<li><p><em>margins differ.</em></p></li>
+</ul>
+</dd>
+</dl>
+<p>-[ Examples ]-</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1/7&#39;</span><span class="p">,</span><span class="s1">&#39;2/7&#39;</span><span class="p">,</span><span class="s1">&#39;4/7&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nu</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1/4&#39;</span><span class="p">,</span><span class="s1">&#39;1/4&#39;</span><span class="p">,</span><span class="s1">&#39;1/2&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kantorovich</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">nu</span><span class="p">)</span>
+<span class="go">{</span>
+<span class="go"> distance: 3/28</span>
+<span class="go"> joining:</span>
+<span class="go"> [[&#39;1/7&#39; &#39;0&#39; &#39;0&#39;]</span>
+<span class="go"> [&#39;1/28&#39; &#39;1/4&#39; &#39;0&#39;]</span>
+<span class="go"> [&#39;1/14&#39; &#39;0&#39; &#39;1/2&#39;]]</span>
+<span class="go"> optimal: yes</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">PyKantorovich</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Stéphane Laurent.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
