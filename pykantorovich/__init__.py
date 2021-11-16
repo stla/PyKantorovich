@@ -20,11 +20,7 @@ def distance_matrix(numbers, distance="euclidean"):
 
 
 def _makeH(mu, nu, number_type):
-    mu = np.asarray(mu)
-    nu = np.asarray(nu)
     n = len(mu)
-    if n != len(nu):
-        raise ValueError("")
     n2 = n*n
     b1 = np.zeros(n2, dtype=int)
     a1 = np.column_stack((b1, np.diag(np.ones(n2, dtype=int))))
@@ -42,7 +38,9 @@ def _makeH(mu, nu, number_type):
     return (mat, n)
 
     
-def _kantorovich_cdd(mu, nu, number_type="fraction", distance_matrix = "0-1"):
+def _kantorovich_cdd(
+    mu, nu, number_type="fraction", distance_matrix="0-1", prettyprint=True
+):
     mat, n = _makeH(mu, nu, number_type)
     mat.obj_type = cdd.LPObjType.MIN
     if distance_matrix == "0-1":
@@ -55,30 +53,112 @@ def _kantorovich_cdd(mu, nu, number_type="fraction", distance_matrix = "0-1"):
     mat.obj_func = d
     lp = cdd.LinProg(mat)
     lp.solve()
+    sol = lp.primal_solution
+    if prettyprint:
+        joining_to_print = np.reshape(np.frompyfunc(format, 1, 1)(sol), (n,n))
+        print("{\n",
+            "distance:", format(lp.obj_value),
+            "\n joining:\n", format(joining_to_print),
+            "\n optimal:", "yes" if lp.status == cdd.LPStatusType.OPTIMAL else "no", 
+        "\n}")
     return {
         "distance": lp.obj_value,
-        "joining": np.reshape(lp.primal_solution, (n, n)),
+        "joining": np.reshape(sol, (n, n)),
         "optimal": "yes" if lp.status == cdd.LPStatusType.OPTIMAL else "no" 
     }
 
 mu = ['1/7','2/7','4/7']
 nu = ['1/4','1/4','1/2']
 
+# mu = ['1/2','1/4','1/4']
+# nu = ['1/4','1/4','1/2']
 
-def extreme_joinings(mu, nu, number_type="fraction"):
+def extreme_joinings(mu, nu, number_type="fraction", prettyprint=True):
+    """
+    Extreme joinings of two probabiity measures.
+
+    Parameters
+    ----------
+    mu : array-like
+        A probability vector.
+    nu : array-like
+        A probability vector. Must have the same length as `mu`.
+    number_type : str
+        The type to use for the calculations, either `"fraction"` or `"float"`.
+    prettyprint: bool
+        Whether to pretty-print the results (especially when `number_type="fraction"`).
+
+    Returns
+    -------
+    list
+        The extreme joinings of `mu` and `nu`.
+        
+    Examples
+    --------
+    >>> mu = ['1/2','1/4','1/4']
+    >>> nu = ['1/4','1/4','1/2']
+    >>> joinings = extreme_joinings(mu, nu)
+    [['1/4' '0' '1/4']
+     ['0' '1/4' '0']
+     ['0' '0' '1/4']]
+    [['1/4' '0' '1/4']
+     ['0' '0' '1/4']
+     ['0' '1/4' '0']]
+    [['1/4' '1/4' '0']
+     ['0' '0' '1/4']
+     ['0' '0' '1/4']]
+    [['0' '1/4' '1/4']
+     ['1/4' '0' '0']
+     ['0' '0' '1/4']]
+    [['0' '1/4' '1/4']
+     ['0' '0' '1/4']
+     ['1/4' '0' '0']]
+    [['0' '0' '1/2']
+     ['0' '1/4' '0']
+     ['1/4' '0' '0']]
+    [['0' '0' '1/2']
+     ['1/4' '0' '0']
+     ['0' '1/4' '0']]
+
+    """
+    if(len(mu) != len(nu)):
+        raise ValueError("`mu` and `nu` must have the same length.")
+    mu = np.asarray(mu)
+    nu = np.asarray(nu)
+    if (
+            number_type == "fraction"
+            and np.all(np.frompyfunc(_is_fraction, 1, 1)(mu))
+            and np.all(np.frompyfunc(_is_fraction, 1, 1)(nu))
+        ):
+        mu_fr = np.frompyfunc(_to_fraction, 1, 1)(mu)
+        if np.sum(mu_fr) != 1:
+            raise ValueError("`mu` does not sum to one.")
+        nu_fr = np.frompyfunc(_to_fraction, 1, 1)(nu)
+        if np.sum(nu_fr) != 1:
+            raise ValueError("`nu` does not sum to one.")
+    else: 
+        if not np.all(np.frompyfunc(_is_number, 1, 1)(mu)):
+            raise ValueError("`mu` is not made of numbers.")
+        if not np.all(np.frompyfunc(_is_number, 1, 1)(nu)):
+            raise ValueError("`nu` is not made of numbers.")
+        if not isclose(np.sum(mu), 1.0):
+            raise ValueError("`mu` does not sum to one.")
+        if not isclose(np.sum(nu), 1.0):
+            raise ValueError("`nu` does not sum to one.")
     mat, n = _makeH(mu, nu, number_type)
     mat.rep_type = cdd.RepType.INEQUALITY
     V = cdd.Polyhedron(mat).get_generators()
-    flatjoinings= np.asarray(V)[:, 1:].tolist()
-    return [np.reshape(j, (n, n)) for j in flatjoinings]
+    flatjoinings = np.asarray(V)[:, 1:].tolist()
+    to_return = [np.reshape(j, (n, n)) for j in flatjoinings]
+    if prettyprint:
+        for i in range(len(flatjoinings)):
+            flatjoinings[i] = np.frompyfunc(format, 1, 1)(flatjoinings[i])
+        [print(format(np.reshape(j, (n, n)))) for j in flatjoinings]
+    return to_return
 
 
 def _kantorovich_sparse(mu, nu, distance_matrix = "0-1"):
-    mu = np.asarray(mu)
-    nu = np.asarray(nu)
     n = len(mu)
-    if n != len(nu):
-        raise ValueError("")
     n2 = n*n
     eyen = sparse.eye(n, dtype = int)    
     A = eyen
@@ -110,11 +190,7 @@ def _kantorovich_sparse(mu, nu, distance_matrix = "0-1"):
 
 
 def _kantorovich_cvx(mu, nu, distance_matrix = "0-1"):
-    mu = np.asarray(mu)
-    nu = np.asarray(nu)
     n = len(mu)
-    if n != len(nu):
-        raise ValueError("")
     n2 = n*n
     eyen = np.eye(n, dtype = int)    
     A = eyen
@@ -163,7 +239,8 @@ def _is_number(x):
 
 
 def kantorovich(
-    mu, nu, distance_matrix = "0-1", method = "cdd", number_type="fraction"
+    mu, nu, distance_matrix = "0-1", method = "cdd", number_type="fraction",
+    prettyprint = True
 ):
     """
     Kantorovich distance between two probabiity measures on a finite set.
@@ -184,12 +261,29 @@ def kantorovich(
     number_type : string
         For method="cdd" only. Can be "float" or "fraction". 
         The default is "fraction".
+    prettyprint : bool
+        This is only for `method="cdd"` and `number_type="fraction"`. This 
+        prints a more readable result.
 
     Returns
     -------
     The Kantorovich distance between `mu` and `nu` and a joining of `mu` and 
     `nu` for which the Kantorovich distance is the probability that the two 
     margins differ.
+    
+    Examples
+    --------
+    >>> mu = ['1/7','2/7','4/7']
+    >>> nu = ['1/4','1/4','1/2']
+    >>> kantorovich(mu, nu)
+    {
+     distance: 3/28 
+     joining:
+     [['1/7' '0' '0']
+     ['1/28' '1/4' '0']
+     ['1/14' '0' '1/2']] 
+     optimal: yes 
+    }
 
     """
     n = len(mu)
@@ -227,7 +321,7 @@ def kantorovich(
     if method != "cdd" and method != "sparse" and method != "cvx":
         raise ValueError("Invalid `method` argument.")
     if method == "cdd":
-        return _kantorovich_cdd(mu, nu, number_type, distance_matrix)
+        return _kantorovich_cdd(mu, nu, number_type, distance_matrix, prettyprint)
     if method == "sparse":
         return _kantorovich_sparse(mu, nu, distance_matrix)
     if method == "cvx":
