@@ -92,13 +92,10 @@ method='cdd', number_type='fraction', prettyprint=True)**
          result.
 
    :Returns:
-      *  The Kantorovich distance between *mu* and *nu* and a joining
-         of *mu* and
-
-      *  *nu* for which the Kantorovich distance is the probability
-         that the two
-
-      *  *margins differ.*
+   
+         The Kantorovich distance between *mu* and *nu* and a joining
+         of *mu* and *nu* for which the Kantorovich distance is the probability
+         that the two margins differ.
 
    -[ Examples ]-
 
