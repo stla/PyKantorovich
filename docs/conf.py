@@ -18,8 +18,8 @@ sys.path.insert(0, os.path.abspath("../"))
 
 # -- Project information -----------------------------------------------------
 
-project = 'PyKantorovich'
-copyright = '2021, Stéphane Laurent'
+project = 'pykantorovich'
+copyright = '2023, Stéphane Laurent'
 author = 'Stéphane Laurent'
 
 # The full version, including alpha/beta/rc tags
