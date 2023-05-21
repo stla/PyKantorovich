@@ -41,7 +41,7 @@ def _kantorovich_cdd(
 ):
     mat, n = _makeH(mu, nu, number_type)
     mat.obj_type = cdd.LPObjType.MIN
-    if distance_matrix == "0-1":
+    if type(distance_matrix) == str:
         d = np.ones((n, n), dtype=int)
         np.fill_diagonal(d, 0)
         d = d.flatten()
@@ -65,11 +65,6 @@ def _kantorovich_cdd(
         "optimal": "yes" if lp.status == cdd.LPStatusType.OPTIMAL else "no" 
     }
 
-mu = ['1/7','2/7','4/7']
-nu = ['1/4','1/4','1/2']
-
-# mu = ['1/2','1/4','1/4']
-# nu = ['1/4','1/4','1/2']
 
 def extreme_joinings(mu, nu, number_type="fraction", prettyprint=True):
     """
@@ -167,7 +162,7 @@ def _kantorovich_sparse(mu, nu, distance_matrix = "0-1"):
     a1 = sparse.eye(n2, dtype = int)
     b1 = np.zeros(n2, dtype=int)
     b2 = np.concatenate((mu, nu))
-    if distance_matrix == "0-1":
+    if type(distance_matrix) == str:
         d = np.ones((n, n), dtype=int)
         np.fill_diagonal(d, 0)
         d = d.flatten()
@@ -183,23 +178,17 @@ def _kantorovich_sparse(mu, nu, distance_matrix = "0-1"):
         "message": res.message
     }
 
-# mu = [1/7,2/7,4/7]
-# nu = [1/4,1/4,1/2]
-
 
 def _kantorovich_cvx(mu, nu, distance_matrix = "0-1"):
     n = len(mu)
-    n2 = n*n
     eyen = np.eye(n, dtype = int)    
     A = eyen
     nones = np.ones(n, dtype = int)
     M1 = np.kron(A, nones)
     M2 = np.tile(np.diag(nones), n)
     M = np.vstack((M1, M2))
-    a1 = np.eye(n2, dtype = int)
-    b1 = np.zeros(n2, dtype=int)
     b2 = np.concatenate((mu, nu))
-    if distance_matrix == "0-1":
+    if type(distance_matrix) == str:
         d = np.ones((n, n), dtype=int)
         np.fill_diagonal(d, 0)
         d = d.flatten()
@@ -271,11 +260,18 @@ def kantorovich(
     
     Examples
     --------
+    >>> from pykantorovich.kantorovich import kantorovich
+    >>> import numpy as np
     >>> mu = ['1/7','2/7','4/7']
     >>> nu = ['1/4','1/4','1/2']
-    >>> kantorovich(mu, nu)
+    >>> d = np.array([
+    ...   ['0', '1', '2'],    
+    ...   ['1', '0', '1'],    
+    ...   ['2', '1', '0']
+    ... ], dtype = "f")
+    >>> kantorovich(mu, nu, distance_matrix=d)
     {
-     distance: 3/28 
+     distance: 5/28 
      joining:
      [['1/7' '0' '0']
      ['1/28' '1/4' '0']
@@ -309,7 +305,7 @@ def kantorovich(
             raise ValueError("`mu` does not sum to one.")
         if not isclose(np.sum(nu), 1.0):
             raise ValueError("`nu` does not sum to one.")
-    if distance_matrix != "0-1":
+    if type(distance_matrix) != str:
         distance_matrix = np.asarray(distance_matrix)
         if distance_matrix.shape != (n, n):
             raise ValueError(f"The distance matrix must be square, with {n} rows and {n} columns.") 

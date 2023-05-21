@@ -3,7 +3,7 @@ name = "PyKantorovich"
 packages = [
     { include = "pykantorovich" },
 ]
-version = "0.1.0"
+version = "0.2.0"
 description = "Kantorovich distance between probabilities on a finite space."
 homepage = "https://github.com/stla/PyKantorovich"
 authors = ["Stéphane Laurent <laurent_step@outlook.fr>"]
